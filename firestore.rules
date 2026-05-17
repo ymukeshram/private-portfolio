@@ -1,0 +1,154 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Global Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Global Helpers
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && 
+             request.auth.token.email == 'ymukeshram@gmail.com';
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // --- Internships ---
+    match /internships/{internshipId} {
+      allow read: if true;
+      
+      allow create: if isAdmin() && 
+                      isValidInternship(incoming()) &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidInternship(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      (incoming().updatedAt == request.time || !incoming().keys().hasAll(['updatedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    function isValidInternship(data) {
+      return data.keys().hasAll(['company', 'role', 'duration', 'description', 'technologies', 'createdAt']) &&
+             data.keys().size() <= 12 && 
+             data.company is string && data.company.size() <= 500 &&
+             data.role is string && data.role.size() <= 500 &&
+             data.duration is string && data.duration.size() <= 200 &&
+             data.description is string && data.description.size() <= 10000 &&
+             data.technologies is list && data.technologies.size() <= 100 &&
+             (data.get('certificateUrl', '') == '' || (data.certificateUrl is string && data.certificateUrl.size() <= 2000));
+    }
+
+    // --- Certifications ---
+    match /certifications/{certId} {
+      allow read: if true;
+      
+      allow create: if isAdmin() && 
+                      isValidCertification(incoming()) &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidCertification(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      (incoming().updatedAt == request.time || !incoming().keys().hasAll(['updatedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    function isValidCertification(data) {
+      return data.keys().hasAll(['imageUrl', 'organization', 'description', 'createdAt']) &&
+             data.keys().size() <= 10 &&
+             data.imageUrl is string && data.imageUrl.size() <= 2000 &&
+             data.organization is string && data.organization.size() <= 500 &&
+             data.description is string && data.description.size() <= 2000;
+    }
+
+    // --- Skills ---
+    match /skills/{skillId} {
+      allow read: if true;
+      
+      allow create: if isAdmin() && 
+                      isValidSkill(incoming()) &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidSkill(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      (incoming().updatedAt == request.time || !incoming().keys().hasAll(['updatedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    function isValidSkill(data) {
+      return data.keys().hasAll(['name', 'createdAt']) &&
+             data.keys().size() <= 8 &&
+             data.name is string && data.name.size() <= 200 &&
+             (data.get('category', '') == '' || (data.category is string && data.category.size() <= 200));
+    }
+
+    // --- Achievements ---
+    match /achievements/{achievementId} {
+      allow read: if true;
+      
+      allow create: if isAdmin() && 
+                      isValidAchievement(incoming()) &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidAchievement(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      (incoming().updatedAt == request.time || !incoming().keys().hasAll(['updatedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    function isValidAchievement(data) {
+      return data.keys().hasAll(['title', 'organization', 'description', 'createdAt']) &&
+             data.keys().size() <= 12 &&
+             data.title is string && data.title.size() <= 1000 &&
+             data.organization is string && data.organization.size() <= 500 &&
+             data.description is string && data.description.size() <= 5000 &&
+             (data.get('date', '') == '' || (data.date is string && data.date.size() <= 200)) &&
+             (data.get('proofUrl', '') == '' || (data.proofUrl is string && data.proofUrl.size() <= 2000));
+    }
+
+    // --- Projects ---
+    match /projects/{projectId} {
+      allow read: if true;
+      
+      allow create: if isAdmin() && 
+                      isValidProject(incoming()) &&
+                      incoming().createdAt == request.time;
+      
+      allow update: if isAdmin() && 
+                      isValidProject(incoming()) &&
+                      incoming().createdAt == existing().createdAt &&
+                      (incoming().updatedAt == request.time || !incoming().keys().hasAll(['updatedAt']));
+      
+      allow delete: if isAdmin();
+    }
+
+    function isValidProject(data) {
+      return data.keys().hasAll(['title', 'description', 'tech', 'image', 'createdAt']) &&
+             data.keys().size() <= 12 &&
+             data.title is string && data.title.size() <= 1000 &&
+             data.description is string && data.description.size() <= 10000 &&
+             data.tech is list && data.tech.size() <= 100 &&
+             data.image is string && data.image.size() <= 2000 &&
+             (data.get('github', '') == '' || (data.github is string && data.github.size() <= 1000)) &&
+             (data.get('live', '') == '' || (data.live is string && data.live.size() <= 1000));
+    }
+  }
+}

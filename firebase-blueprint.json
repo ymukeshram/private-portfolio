@@ -1,0 +1,92 @@
+{
+  "entities": {
+    "internship": {
+      "title": "Internship",
+      "description": "Details of professional internships",
+      "type": "object",
+      "properties": {
+        "company": { "type": "string" },
+        "role": { "type": "string" },
+        "duration": { "type": "string" },
+        "description": { "type": "string" },
+        "technologies": { "type": "array", "items": { "type": "string" } },
+        "certificateUrl": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["company", "role", "duration", "description", "technologies", "createdAt"]
+    },
+    "certification": {
+      "title": "Certification",
+      "description": "Certificates and professional credentials",
+      "type": "object",
+      "properties": {
+        "imageUrl": { "type": "string", "format": "uri" },
+        "organization": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["imageUrl", "organization", "description", "createdAt"]
+    },
+    "skill": {
+      "title": "Skill",
+      "description": "Technical skills and proficiencies",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "category": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["name", "createdAt"]
+    },
+    "achievement": {
+      "title": "Achievement",
+      "description": "Awards, honors, and accomplishments",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "organization": { "type": "string" },
+        "date": { "type": "string" },
+        "description": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "organization", "createdAt"]
+    },
+    "project": {
+      "title": "Project",
+      "description": "Featured software projects",
+      "type": "object",
+      "properties": {
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "tech": { "type": "array", "items": { "type": "string" } },
+        "image": { "type": "string", "format": "uri" },
+        "github": { "type": "string", "format": "uri" },
+        "live": { "type": "string", "format": "uri" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["title", "description", "tech", "image", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/internships/{internshipId}": {
+      "schema": "internship",
+      "description": "Collection of internships"
+    },
+    "/certifications/{certId}": {
+      "schema": "certification",
+      "description": "Collection of certifications"
+    },
+    "/skills/{skillId}": {
+      "schema": "skill",
+      "description": "Collection of skills"
+    },
+    "/achievements/{achievementId}": {
+      "schema": "achievement",
+      "description": "Collection of achievements"
+    },
+    "/projects/{projectId}": {
+      "schema": "project",
+      "description": "Collection of projects"
+    }
+  }
+}
