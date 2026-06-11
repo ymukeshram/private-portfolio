@@ -48,7 +48,7 @@ export default function Hero() {
           
           <div className="flex flex-wrap gap-4">
             <motion.a
-              href= "/MUKESH-RESUME.pdf"
+              href= "Y.MUKESH-RESUME.pdf"
               download
               target="_blank"
               rel="noopener noreferrer"
